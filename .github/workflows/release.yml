@@ -39,9 +39,16 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew build
 
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: press2hold-${{ steps.versions.outputs.minecraft_version }}-${{ steps.versions.outputs.mod_version }}
+          path: build/libs/*.jar
+          retention-days: 30
+
       - name: Create GitHub release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         run: |
           tag="v${{ steps.versions.outputs.mod_version }}"
           if gh release view "${tag}" &>/dev/null; then
